@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head('Pizze')"></head>
+
+<body th:attr="onload=|truncateElements('special-offer-id', 15); truncateElementsList('pizza-ingredients-', ${pizzas.size()}, 60)|">
+    <div th:replace="fragments/navbar :: navbar()"></div>
+
+    <h1 class="text-center pt-4 pb-5">Pizze</h1>
+
+    <div class="container pt-3 pb-5">
+        <div class="d-flex justify-content-between gap-5 flex-wrap">
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/pizzas/create}" class="d-block dec-none me-5">
+                <i class="fa-solid fa-plus fs-1 bg-success p-4 d-block add"></i>
+            </a>
+            <a sec:authorize="!hasAuthority('ADMIN')" th:href="@{/pizzas/create}" class="d-block dec-none me-5">
+                <span></span>
+            </a>
+            <form class="d-flex flex-column justify-content-start align-items-center al-bg-secondary gap-3 p-4 al-border position-relative">
+                <h2>Filtri</h2>
+                <input th:if="!${search}" type="text" name="name" th:value="${name}"
+                    placeholder="Nome della pizza...">
+                <input th:unless="!${search}" type="text" name="name" th:value="${oldName}"
+                    placeholder="Nome della pizza...">
+                <div class="d-flex justify-content-between align-items-end">
+                    <fieldset class="pe-5">
+                        <legend>Seleziona un ordinamento:</legend>
+                        <div class="d-flex flex-column gap-2">
+                            <div>
+                                <input th:if="${oldOrderBy} == 'default'" type="radio" id="default" name="orderBy" value="default" checked>
+                                <input th:unless="${oldOrderBy} == 'default'" type="radio" id="default" name="orderBy" value="default">
+                                <label for="default">Default</label>
+                            </div>
+                            <div>
+                                <input th:if="${oldOrderBy} == 'desc'" type="radio" id="desc" name="orderBy" value="desc" checked>
+                                <input th:unless="${oldOrderBy} == 'desc'" type="radio" id="desc" name="orderBy" value="desc">
+                                <label for="desc">Prezzo Discendente</label>
+                            </div>
+                            <div>
+                                <input th:if="${oldOrderBy} == 'asc'" type="radio" id="asc" name="orderBy" value ="asc" checked>
+                                <input th:unless="${oldOrderBy} == 'asc'" type="radio" id="asc" name="orderBy" value ="asc">
+                                <label for="asc">Prezzo Ascendente</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="d-flex flex-column justify-content-between gap-4">
+                        <div class="d-flex flex-column gap-2">
+                            <label for="special-offer-id" class="ps-2">
+                                <small>Offerte:</small>
+                            </label>
+                            <select name="specialOfferId" id="special-offer-id" class="select-max-width">
+                                <option th:selected="${oldSpecialOfferId} != null and ${oldSpecialOfferId} == 0" value="0">Tutte</option>
+                                <option th:each="specialOffer: ${specialOffers}" th:value="${specialOffer.getId()}" th:selected="${oldSpecialOfferId} != null and ${oldSpecialOfferId} == ${specialOffer.getId()}" th:text="${specialOffer.getTitle()}" class="data-truncable-element"></option>
+                            </select>
+                        </div>
+                        <input type="submit" class="btn btn-outline-light mt-1 px-3 ms-3">
+                    </div>
+                </div>
+
+                <a href="/pizzas/" class="filter-refresh">
+                    <i class="fa-solid fa-arrows-rotate text-success"></i>
+                </a>
+            </form>
+        </div>
+        
+        <div th:if="!${isEmpty}">
+
+            <div class="row pt-3">
+                <div th:each="pizza, status: ${pizzas}" class="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 p-3">
+                    <div th:replace="fragments/pizza_card :: pizzaCard(${pizza}, ${status.index})"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2 th:unless="!${isEmpty}" class="text-center text-decoration-underline pt-5">Non ci sono pizze</h2>
+    </div>
+
+    <form method="post" id="delete-form"></form>
+
+    <div th:replace="fragments/modal.html :: modal('Sei sicuro di voler eliminare questa pizza? Questa azione è irreversibile.', 'Annulla', 'Elimina')"></div>
+
+    <div th:replace="fragments/bootstrap_import :: js()"></div>
+</body>
+
+</html>

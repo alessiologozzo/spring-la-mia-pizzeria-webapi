@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments/head :: head('Home')}"></head>
+
+    <body>
+        <div th:replace="fragments/navbar :: navbar()"></div>
+
+        <div class="container mt-5 py-5 px-4 bg-tertiary">
+            <h1 class="text-center">Home - Benvenuto!</h1>
+
+            <h5 class="pt-3 pb-1">Utenti registrati</h5>
+            <div class="d-flex flex-column gap-1 pt-2">
+                <div>
+                    <h6>Utente 1</h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <small class="text-decoration-underline">Username:</small>
+                        <span>user</span>
+
+                        <small class="text-decoration-underline">Password:</small>
+                        <span>user</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h6>Utente 2</h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <small class="text-decoration-underline">Username:</small>
+                        <span>admin</span>
+
+                        <small class="text-decoration-underline">Password:</small>
+                        <span>admin</span>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="pt-4 pb-1">Informazioni utili</h5>
+            <p>
+                Se non sei loggato hai accesso solamente a questa pagina.
+                <br>
+                Se sei loggato come user hai accesso solamente a questa pagina e alla index delle pizze('/pizzas/'), ma non puoi modificare le pizze dalle card né creare nuove pizze.
+                <br>
+                Se sei loggato come admin hai accesso a tutte le pagine e funzionalità del sito.
+            </p>
+        </div>
+
+        <div th:replace="fragments/bootstrap_import :: js()"></div>
+    </body>
+</html>
