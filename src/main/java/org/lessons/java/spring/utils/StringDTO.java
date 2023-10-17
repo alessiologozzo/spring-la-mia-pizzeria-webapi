@@ -4,7 +4,7 @@ public class StringDTO {
 	private String value;
 	
 	public StringDTO() {
-		value = "POLLAME";
+		value = "";
 	}
 	
 	public void setValue(String value) {

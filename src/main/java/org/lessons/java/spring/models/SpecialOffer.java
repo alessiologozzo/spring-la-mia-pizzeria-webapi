@@ -9,6 +9,8 @@ import java.util.Locale;
 
 import org.lessons.java.spring.validators.annotations.ValidDates;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,6 +52,7 @@ public class SpecialOffer {
 	private LocalDate endDate;
 
 	@OneToMany(mappedBy = "specialOffer")
+	@JsonManagedReference
 	private List<Pizza> pizzas;
 
 	private SpecialOffer() {

@@ -19,7 +19,7 @@ public class AuthConfiguration {
 		return http.authorizeHttpRequests(auth -> 
 			auth
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-			.requestMatchers("/", "/error", "/forbidden").permitAll()
+			.requestMatchers("/", "/error", "/forbidden", "/api/**").permitAll()
 			.requestMatchers("/pizzas/").hasAnyAuthority("USER", "ADMIN")
 			.requestMatchers("/pizzas/**").hasAnyAuthority("ADMIN")
 			.requestMatchers("/offers/**").hasAuthority("ADMIN")
@@ -28,6 +28,7 @@ public class AuthConfiguration {
 			.formLogin(form -> form.loginPage("/login").permitAll())
 			.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
 			.exceptionHandling(ex -> ex.accessDeniedPage("/forbidden"))
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
 			.build();
 	}
 	
