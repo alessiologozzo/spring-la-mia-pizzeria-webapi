@@ -1,13 +1,11 @@
 package org.lessons.java.spring.api.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.lessons.java.spring.models.Ingredient;
 import org.lessons.java.spring.models.Pizza;
+import org.lessons.java.spring.models.dtos.PizzaDTO;
 import org.lessons.java.spring.services.IngredientService;
 import org.lessons.java.spring.services.PizzaService;
-import org.lessons.java.spring.utils.StringDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +13,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,33 +59,23 @@ public class PizzaControllerApi {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Pizza> store(@Valid @ModelAttribute Pizza pizza, BindingResult bindingResult, @ModelAttribute StringDTO stringDTO) {
+	public ResponseEntity<Pizza> store(@Valid @RequestBody PizzaDTO pizza, BindingResult bindingResult) {
 		ResponseEntity<Pizza> result = null;
 		
 		if(bindingResult.hasErrors())
 			result = new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		else {
-			List<Ingredient> ingredients = new ArrayList<>();
-			String[] strIngredients = stringDTO.getValue().replace(" ", "").split(",");
-
-			if (strIngredients.length == 1 && strIngredients[0].isBlank()) {
-				ingredients = null;
-				strIngredients = new String[0];
-			}
-			for (int i = 0; i < strIngredients.length; i++)
-				ingredients.add(ingredientService.findByName(strIngredients[i]));
+			Pizza newPizza = new Pizza(pizza.getName(), null, pizza.getPrice(), null);
+			pizzaService.save(newPizza);
 			
-			pizza.setIngredients(ingredients);
-			pizzaService.save(pizza);
-			
-			result = new ResponseEntity<>(pizza, HttpStatus.CREATED);
+			result = new ResponseEntity<>(newPizza, HttpStatus.CREATED);
 		}
 		
 		return result;
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Pizza> update(@Valid @ModelAttribute Pizza pizza, BindingResult bindingResult, @ModelAttribute StringDTO stringDTO, @PathVariable Long id) {
+	public ResponseEntity<Pizza> update(@Valid @RequestBody PizzaDTO pizza, BindingResult bindingResult, @PathVariable Long id) {
 		ResponseEntity<Pizza> result = null;
 		
 		Pizza pizzaToUpdate = pizzaService.findById(id);
@@ -96,19 +84,8 @@ public class PizzaControllerApi {
 		else if(bindingResult.hasErrors())
 			result = new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		else {
-			List<Ingredient> ingredients = new ArrayList<>();
-			String[] strIngredients = stringDTO.getValue().replace(" ", "").split(",");
-
-			if (strIngredients.length == 1 && strIngredients[0].isBlank()) {
-				ingredients = null;
-				strIngredients = new String[0];
-			}
-			for (int i = 0; i < strIngredients.length; i++)
-				ingredients.add(ingredientService.findByName(strIngredients[i]));
-			
 			pizzaToUpdate.setName(pizza.getName());
 			pizzaToUpdate.setPrice(pizza.getPrice());
-			pizzaToUpdate.setIngredients(ingredients);
 			pizzaService.save(pizzaToUpdate);
 			result = new ResponseEntity<>(pizzaToUpdate, HttpStatus.OK);
 		}
