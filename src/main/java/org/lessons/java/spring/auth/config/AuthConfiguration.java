@@ -28,7 +28,7 @@ public class AuthConfiguration {
 			.formLogin(form -> form.loginPage("/login").permitAll())
 			.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
 			.exceptionHandling(ex -> ex.accessDeniedPage("/forbidden"))
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
 			.build();
 	}
 	
